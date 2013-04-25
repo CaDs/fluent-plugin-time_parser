@@ -15,7 +15,7 @@ unless ENV.has_key?('VERBOSE')
   $log = nulllogger
 end
 
-require 'fluent/plugin/out_extract_query_params'
+require 'fluent/plugin/out_time_parser'
 
 class Test::Unit::TestCase
 end

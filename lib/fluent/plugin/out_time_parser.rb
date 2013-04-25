@@ -18,6 +18,7 @@ module Fluent
           !add_tag_suffix
       )
         raise ConfigError, "out_extract_query_params: At least one of remove_tag_prefix/remove_tag_suffix/add_tag_prefix/add_tag_suffix is required to be set."
+        raise ConfigError, "You must specify a time zone" unless time_zone
       end
     end
 
