@@ -2,7 +2,6 @@
 require 'test_helper'
 require 'time'
 require 'tzinfo'
-require 'debugger'
 
 class TimeParserOutputTest < Test::Unit::TestCase
 
