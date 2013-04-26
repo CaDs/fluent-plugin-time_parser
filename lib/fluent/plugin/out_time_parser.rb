@@ -48,10 +48,12 @@ module Fluent
 
         date = converted_time.to_date.to_s
         hour = converted_time.hour.to_s
-        record['time'] = date
+        record['date'] = date
         record['hour'] = hour
       rescue ArgumentError => error
         $log.warn("out_extract_query_params: #{error.message}")
+      rescue TZInfo::InvalidTimezoneIdentifier
+        $log.warn("Timezone Not Valid, please refer to http://tzinfo.rubyforge.org/doc/classes/TZInfo/Timezone.html for valid timezones")
       end
 
       super(tag, time, record)
