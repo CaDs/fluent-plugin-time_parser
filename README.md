@@ -3,7 +3,7 @@
 ## Component
 TimeParserOutput
 
-Based on the great extract-query-params plugin by @Kentaro (https://github.com/kentaro/fluent-plugin-extract_query_params).
+Based on the great extract-query-params plugin by [@Kentaro](https://github.com/kentaro/fluent-plugin-extract_query_params).
 Will take a time attribute and will extract the date and the hour for a given time zone.
 
 ## wat?!
