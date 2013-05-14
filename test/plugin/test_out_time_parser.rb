@@ -6,6 +6,7 @@ require 'tzinfo'
 class TimeParserOutputTest < Test::Unit::TestCase
 
   TIME = "2013-04-14T06:14:36Z"
+  GIRIGIRI_TIME = "013-04-14T15:14:36Z"
 
   def setup
     Fluent::Test.setup
@@ -59,6 +60,22 @@ class TimeParserOutputTest < Test::Unit::TestCase
     ])
     tag    = 'test'
     record = {'time' => TIME}
+    d.instance.filter_record('test', Time.now, record)
+    tz = TZInfo::Timezone.get('Japan')
+    converted_time = tz.utc_to_local(Time.parse(TIME))
+
+    assert_equal record['date'], converted_time.to_date.to_s
+    assert_equal record['hour'], converted_time.hour.to_s
+  end
+
+  def test_girigiri_records
+    d = create_driver(%[
+      key            time
+      add_tag_prefix extracted.
+      time_zone      Japan
+    ])
+    tag    = 'test'
+    record = {'time' => GIRIGIRI_TIME}
     d.instance.filter_record('test', Time.now, record)
     tz = TZInfo::Timezone.get('Japan')
     converted_time = tz.utc_to_local(Time.parse(TIME))
