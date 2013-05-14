@@ -14,7 +14,7 @@ Will take a time attribute and will extract the date and the hour for a given ti
 
   key            time
   add_tag_prefix extracted.
-  time_zone      Tokyo
+  time_zone      Asia/Tokyo
 </match>
 ```
 
