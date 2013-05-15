@@ -22,34 +22,35 @@ class TimeParserOutputTest < Test::Unit::TestCase
     d = create_driver(%[
       key            test
       add_tag_prefix extracted.
-      time_zone      Tokyo
+      time_zone      Asia/Tokyo
     ])
     assert_equal 'test', d.instance.key
     assert_equal 'extracted.', d.instance.add_tag_prefix
-    assert_equal 'Tokyo',   d.instance.time_zone
+    assert_equal 'Asia/Tokyo',   d.instance.time_zone
 
     #Default Key
     d = create_driver(%[
       add_tag_prefix extracted.
-      time_zone      Tokyo
+      time_zone      Asia/Tokyo
     ])
     assert_equal 'time', d.instance.key
     assert_equal 'extracted.', d.instance.add_tag_prefix
-    assert_equal 'Tokyo',   d.instance.time_zone
+    assert_equal 'Asia/Tokyo',   d.instance.time_zone
 
     #No Prefix
     assert_raise(Fluent::ConfigError) do
       create_driver(%[
-        time_zone      Tokyo
+        time_zone      Asia/Tokyo
       ])
     end
+
     #No TimeZone
-    assert_raise(Fluent::ConfigError) do
-      create_driver(%[
-        key            test
-        add_tag_prefix extracted.
-      ])
-    end
+    d = create_driver(%[
+      key            test
+      add_tag_prefix extracted.
+    ])
+    assert_equal 'test', d.instance.key
+    assert_equal 'extracted.', d.instance.add_tag_prefix
   end
 
   def test_filter_record

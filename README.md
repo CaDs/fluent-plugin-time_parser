@@ -51,7 +51,7 @@ You must add at least one of these params.
 
 ### time_zone
 
-Necessary. time_parser uses the TZInfo (http://tzinfo.rubyforge.org/) library to handle time zones.
+Optional. time_parser uses the TZInfo (http://tzinfo.rubyforge.org/) library to handle time zones.
 
 ### parsed_time_tag, parsed_hour_tag, parsed_date_tag
 
