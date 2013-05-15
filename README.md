@@ -22,19 +22,21 @@ And you feed such a value into fluentd:
 
 ```
 "test" => {
-  "time" => ""2013-04-14T06:14:36Z""
+  "time" => "2013-05-14T15:14:36Z"
 }
 ```
 
-Then you'll get re-emmited tag/record-s below:
+Then you'll get re-emmited tags/records like so:
 
 ```
 "extracted.test" => {
-  "time" => "2013-04-14T06:14:36Z"
-  "date" => "2013-04-14",
-  "hour" => "15"
+  "time" => "2013-05-14T15:14:36Z",
+  "parsed_time" => "2013-05-15T00:14:36+09:00",
+  "parsed_date" => "2013-05-15",
+  "parsed_hour" => "0"
 }
 ```
+
 ## Configuration
 
 ### key
@@ -49,7 +51,11 @@ You must add at least one of these params.
 
 ### time_zone
 
-time_parser is using TZInfo (http://tzinfo.rubyforge.org/) library to handle time zones.
+Necessary. time_parser uses the TZInfo (http://tzinfo.rubyforge.org/) library to handle time zones.
+
+### parsed_time_tag, parsed_hour_tag, parsed_date_tag
+
+The parsed_* parameter names can be configured as well.
 
 ## Installation
 
