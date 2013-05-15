@@ -46,7 +46,7 @@ module Fluent
         record_time = DateTime.parse(record[key])
 
         if time_zone && time_zone != ""
-          tz = TZInfo::Timezone.get(time_zone.capitalize)
+          tz = TZInfo::Timezone.get(time_zone)
 
           period = tz.period_for_utc(record_time)
           rational_offset = period.utc_total_offset_rational

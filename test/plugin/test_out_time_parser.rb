@@ -57,7 +57,7 @@ class TimeParserOutputTest < Test::Unit::TestCase
     d = create_driver(%[
       key            time
       add_tag_prefix extracted.
-      time_zone      Japan
+      time_zone      Asia/Tokyo
     ])
     tag    = 'test'
     record = {'time' => TIME}
@@ -110,7 +110,7 @@ class TimeParserOutputTest < Test::Unit::TestCase
     d = create_driver(%[
       key            time
       add_tag_prefix extracted.
-      time_zone      Japan
+      time_zone      Asia/Tokyo
     ])
 
     d.run { d.emit('time' => TIME) }
@@ -125,7 +125,7 @@ class TimeParserOutputTest < Test::Unit::TestCase
     d = create_driver(%[
       key            time
       add_tag_prefix extracted.
-      time_zone      Japan
+      time_zone      Asia/Tokyo
     ])
 
     d.run do
@@ -146,7 +146,7 @@ class TimeParserOutputTest < Test::Unit::TestCase
     d = create_driver(%[
       key            time
       add_tag_prefix extracted.
-      time_zone      Japan
+      time_zone      Asia/Tokyo
     ])
     wrong_time = 'wrong time'
     d.run { d.emit('time' => wrong_time) }
