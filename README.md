@@ -1,4 +1,4 @@
-# fluent-plugin-time_parser
+# fluent-plugin-time_parser, a plugin for [Fluentd](http://fluentd.org)
 
 ## Component
 TimeParserOutput
