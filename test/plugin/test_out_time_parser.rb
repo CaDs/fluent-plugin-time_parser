@@ -12,29 +12,29 @@ class TimeParserOutputTest < Test::Unit::TestCase
     Fluent::Test.setup
   end
 
-  def create_driver(conf, tag = 'test')
-    Fluent::Test::OutputTestDriver.new(
-      Fluent::TimeParserOutput, tag
+  def create_driver(conf)
+    Fluent::Test::Driver::Output.new(
+      Fluent::Plugin::TimeParserOutput
     ).configure(conf)
   end
 
   def test_configure
     d = create_driver(%[
       key            test
-      add_tag_prefix extracted.
+      tag extracted.${tag}
       time_zone      Asia/Tokyo
     ])
     assert_equal 'test', d.instance.key
-    assert_equal 'extracted.', d.instance.add_tag_prefix
+    assert_equal 'extracted.${tag}', d.instance.tag
     assert_equal 'Asia/Tokyo',   d.instance.time_zone
 
     #Default Key
     d = create_driver(%[
-      add_tag_prefix extracted.
+      tag extracted.${tag}
       time_zone      Asia/Tokyo
     ])
     assert_equal 'time', d.instance.key
-    assert_equal 'extracted.', d.instance.add_tag_prefix
+    assert_equal 'extracted.${tag}', d.instance.tag
     assert_equal 'Asia/Tokyo',   d.instance.time_zone
 
     #No Prefix
@@ -47,16 +47,16 @@ class TimeParserOutputTest < Test::Unit::TestCase
     #No TimeZone
     d = create_driver(%[
       key            test
-      add_tag_prefix extracted.
+      tag extracted.${tag}
     ])
     assert_equal 'test', d.instance.key
-    assert_equal 'extracted.', d.instance.add_tag_prefix
+    assert_equal 'extracted.${tag}', d.instance.tag
   end
 
   def test_filter_record
     d = create_driver(%[
       key            time
-      add_tag_prefix extracted.
+      tag extracted.${tag}
       time_zone      Asia/Tokyo
     ])
     tag    = 'test'
@@ -72,7 +72,7 @@ class TimeParserOutputTest < Test::Unit::TestCase
   def test_girigiri_records
     d = create_driver(%[
       key            time
-      add_tag_prefix extracted.
+      tag extracted.${tag}
       time_zone      Japan
     ])
     tag    = 'test'
@@ -88,7 +88,7 @@ class TimeParserOutputTest < Test::Unit::TestCase
   def test_filter_record_bad_parameters
     d = create_driver(%[
       key            time
-      add_tag_prefix extracted.
+      tag extracted.${tag}
       time_zone      myPlace
     ])
     tag    = 'test'
@@ -109,31 +109,46 @@ class TimeParserOutputTest < Test::Unit::TestCase
   def test_emit
     d = create_driver(%[
       key            time
-      add_tag_prefix extracted.
+      tag extracted.${tag}
       time_zone      Asia/Tokyo
     ])
 
-    d.run { d.emit('time' => TIME) }
-    emits = d.emits
+    d.run(default_tag: 'test') { d.feed('time' => TIME) }
+    emits = d.events
 
     assert_equal 1, emits.count
     assert_equal 'extracted.test', emits[0][0]
     assert_equal TIME, emits[0][2]['time']
   end
 
-  def test_emit_multi
+  def test_emit_without_tag_prefix
     d = create_driver(%[
       key            time
-      add_tag_prefix extracted.
+      tag            ${tag[1]}
       time_zone      Asia/Tokyo
     ])
 
-    d.run do
-      d.emit('time' => TIME)
-      d.emit('time' => TIME)
-      d.emit('time' => TIME)
+    d.run(default_tag: 'removed.test') { d.feed('time' => TIME) }
+    emits = d.events
+
+    assert_equal 1, emits.count
+    assert_equal 'test', emits[0][0]
+    assert_equal TIME, emits[0][2]['time']
+  end
+
+  def test_emit_multi
+    d = create_driver(%[
+      key            time
+      tag extracted.${tag}
+      time_zone      Asia/Tokyo
+    ])
+
+    d.run(default_tag: 'test') do
+      d.feed('time' => TIME)
+      d.feed('time' => TIME)
+      d.feed('time' => TIME)
     end
-    emits = d.emits
+    emits = d.events
 
     assert_equal 3, emits.count
     0.upto(2) do |i|
@@ -145,12 +160,12 @@ class TimeParserOutputTest < Test::Unit::TestCase
   def test_emit_with_invalid_time
     d = create_driver(%[
       key            time
-      add_tag_prefix extracted.
+      tag extracted.${tag}
       time_zone      Asia/Tokyo
     ])
     wrong_time = 'wrong time'
-    d.run { d.emit('time' => wrong_time) }
-    emits = d.emits
+    d.run(default_tag: 'test') { d.feed('time' => wrong_time) }
+    emits = d.events
 
     assert_equal 1, emits.count
     assert_equal 'extracted.test', emits[0][0]

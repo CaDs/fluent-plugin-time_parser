@@ -1,32 +1,31 @@
 require 'time'
 require 'tzinfo'
+require 'fluent/plugin/output'
 
-module Fluent
+module Fluent::Plugin
   class TimeParserOutput < Output
-    include Fluent::HandleTagNameMixin
     Fluent::Plugin.register_output('time_parser', self)
 
-    # Define `router` method of v0.12 to support v0.10 or earlier
-    unless method_defined?(:router)
-      define_method("router") { Fluent::Engine }
-    end
+    helpers :event_emitter, :compat_parameters
 
+    DEFAULT_BUFFER_TYPE = "memory"
+
+    config_param :tag, :string
     config_param :key, :string, :default => 'time'
     config_param :time_zone, :string, :default => ''
     config_param :parsed_time_tag, :string, :default => 'parsed_time'
     config_param :parsed_hour_tag, :string, :default => 'parsed_hour'
     config_param :parsed_date_tag, :string, :default => 'parsed_date'
 
+    config_section :buffer do
+      config_set_default :@type, DEFAULT_BUFFER_TYPE
+      config_set_default :chunk_keys, ['tag']
+    end
+
     def configure(conf)
+      compat_parameters_convert(conf, :buffer)
       super
-      if (
-          !remove_tag_prefix &&
-          !remove_tag_suffix &&
-          !add_tag_prefix    &&
-          !add_tag_suffix
-      )
-        raise ConfigError, "out_extract_query_params: At least one of remove_tag_prefix/remove_tag_suffix/add_tag_prefix/add_tag_suffix is required to be set."
-      end
+      raise Fluent::ConfigError, "'tag' in chunk_keys is required." if not @chunk_key_tag
     end
 
     def start
@@ -37,13 +36,13 @@ module Fluent
       super
     end
 
-    def emit(tag, es, chain)
-      es.each {|time,record|
+    def write(chunk)
+      tag = extract_placeholders(@tag, chunk.metadata)
+      chunk.msgpack_each {|time,record|
         t = tag.dup
         filter_record(t, time, record)
         router.emit(t, time, record)
       }
-      chain.next
     end
 
     def filter_record(tag, time, record)
@@ -68,11 +67,10 @@ module Fluent
         record[parsed_hour_tag] = hour
 
       rescue ArgumentError => error
-        $log.warn("out_extract_query_params: #{error.message}")
+        log.warn("out_extract_query_params: #{error.message}")
       rescue TZInfo::InvalidTimezoneIdentifier
-        $log.warn("Timezone Not Valid, please refer to http://tzinfo.rubyforge.org/doc/classes/TZInfo/Timezone.html for valid timezones")
+        log.warn("Timezone Not Valid, please refer to http://tzinfo.rubyforge.org/doc/classes/TZInfo/Timezone.html for valid timezones")
       end
-      super(tag, time, record)
     end
   end
 end
