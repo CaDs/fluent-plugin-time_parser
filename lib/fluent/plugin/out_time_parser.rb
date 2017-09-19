@@ -6,6 +6,11 @@ module Fluent
     include Fluent::HandleTagNameMixin
     Fluent::Plugin.register_output('time_parser', self)
 
+    # Define `router` method of v0.12 to support v0.10 or earlier
+    unless method_defined?(:router)
+      define_method("router") { Fluent::Engine }
+    end
+
     config_param :key, :string, :default => 'time'
     config_param :time_zone, :string, :default => ''
     config_param :parsed_time_tag, :string, :default => 'parsed_time'
@@ -36,7 +41,7 @@ module Fluent
       es.each {|time,record|
         t = tag.dup
         filter_record(t, time, record)
-        Engine.emit(t, time, record)
+        router.emit(t, time, record)
       }
       chain.next
     end
