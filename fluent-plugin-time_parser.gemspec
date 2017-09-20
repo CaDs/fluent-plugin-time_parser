@@ -1,7 +1,7 @@
 Gem::Specification.new do |gem|
   gem.name          = 'fluent-plugin-time_parser'
-  gem.version       = '0.0.6'
-  gem.authors       = ['Carlos Donderis', 'Michael H. Oshita']
+  gem.version       = '0.1.0'
+  gem.authors       = ['Carlos Donderis', 'Michael H. Oshita', 'Hiroshi Hatake']
   gem.email         = ['cdonderis@gmail.com', 'ijinpublic+github@gmail.com']
   gem.homepage      = 'http://github.com/cads/fluent-plugin-time_parser'
   gem.description   = %q{Fluentd plugin to parse the time parameter.}
