@@ -13,9 +13,8 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
 
   gem.add_development_dependency 'rake'
-  gem.add_development_dependency 'fluentd'
   gem.add_development_dependency 'tzinfo'
   gem.add_development_dependency 'test-unit', '~> 3.2'
   gem.add_runtime_dependency     'tzinfo'
-  gem.add_runtime_dependency     'fluentd'
+  gem.add_runtime_dependency     'fluentd', ['>= 0.14.0', '< 2']
 end

@@ -13,7 +13,7 @@ Will take a time attribute and will extract the date and the hour for a given ti
   type time_parser
 
   key            time
-  add_tag_prefix extracted.
+  tag extracted.${tag}
   time_zone      Asia/Tokyo
 </match>
 ```
@@ -43,11 +43,13 @@ Then you'll get re-emmited tags/records like so:
 
 `key` is used to point a key whose value contains the time you want to parse.
 
-### remove_tag_prefix, remove_tag_suffix, add_tag_prefix, add_tag_suffix
+### tag
 
-These params are included from `Fluent::HandleTagNameMixin`. See the code for details.
+In this param, users can write placeholders.
 
-You must add at least one of these params.
+Please use placeholders ${tag}, ${tag[0]}, ${tag[1]} in configuration.
+
+Note that `Fluent::HandleTagNameMixin` dependency is removed in v0.14 style of this plugin.
 
 ### time_zone
 
